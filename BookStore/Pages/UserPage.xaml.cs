@@ -15,7 +15,7 @@ namespace BookStore.Pages
             LoadOrders();
         }
 
-        private void LoadOrders()
+        public void LoadOrders()
         {
             using (var db = new BookStoreEntities())
             {

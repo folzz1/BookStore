@@ -18,7 +18,7 @@ namespace BookStore.Pages
             LoadBooks();
         }
 
-        private void LoadBooks()
+        public void LoadBooks()
         {
             using (var db = new BookStoreEntities())
             {
@@ -57,31 +57,52 @@ namespace BookStore.Pages
             _selectedBookIds.Remove(bookId);
         }
 
+        public bool ValidateOrder(string deliveryAddress, List<int> selectedBookIds)
+        {
+            return !string.IsNullOrWhiteSpace(deliveryAddress) && selectedBookIds.Any();
+        }
+
         private void OrderButton_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(DeliveryAddressTextBox.Text) || !_selectedBookIds.Any())
+            if (!ValidateOrder(DeliveryAddressTextBox.Text, _selectedBookIds))
             {
                 MessageBox.Show("Пожалуйста, выберите хотя бы одну книгу и введите адрес доставки.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            using (var db = new BookStoreEntities())
+            if (PlaceOrder(DeliveryAddressTextBox.Text, _selectedBookIds))
             {
-                foreach (var bookId in _selectedBookIds)
-                {
-                    var order = new Orders
-                    {
-                        UserID = _userId,
-                        BookID = bookId,
-                        OrderDate = DateTime.Now,
-                        DeliveryAddress = DeliveryAddressTextBox.Text
-                    };
-                    db.Orders.Add(order);
-                }
-
-                db.SaveChanges();
                 MessageBox.Show("Заказ успешно оформлен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 NavigationService.GoBack();
+            }
+        }
+
+        public bool PlaceOrder(string deliveryAddress, List<int> selectedBookIds)
+        {
+            try
+            {
+                using (var db = new BookStoreEntities())
+                {
+                    foreach (var bookId in selectedBookIds)
+                    {
+                        var order = new Orders
+                        {
+                            UserID = _userId,
+                            BookID = bookId,
+                            OrderDate = DateTime.Now,
+                            DeliveryAddress = deliveryAddress
+                        };
+                        db.Orders.Add(order);
+                    }
+
+                    db.SaveChanges();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при оформлении заказа: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
         }
     }

@@ -32,6 +32,20 @@ namespace BookStore.Pages
             }
         }
 
+        public void DeleteBook(int bookId)
+        {
+            using (var db = new BookStoreEntities())
+            {
+                var bookToDelete = db.Books.Find(bookId);
+                if (bookToDelete != null)
+                {
+                    db.Books.Remove(bookToDelete);
+                    db.SaveChanges();
+                }
+            }
+            LoadBooks();
+        }
+
         private void AddBook_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new AddBookPage());
@@ -54,17 +68,7 @@ namespace BookStore.Pages
             if (BooksDataGrid.SelectedItem is var selectedBook && selectedBook != null)
             {
                 int bookId = (int)((dynamic)selectedBook).BookID;
-
-                using (var db = new BookStoreEntities())
-                {
-                    var bookToDelete = db.Books.Find(bookId);
-                    if (bookToDelete != null)
-                    {
-                        db.Books.Remove(bookToDelete);
-                        db.SaveChanges();
-                        LoadBooks();
-                    }
-                }
+                DeleteBook(bookId);
             }
             else
             {

@@ -60,6 +60,20 @@ namespace BookStore.Pages
             }
         }
 
+        public void AddBook(string title, int authorId, int genreId, decimal price, int stock)
+        {
+            var newBook = new Books
+            {
+                Title = title,
+                AuthorID = authorId,
+                GenreID = genreId,
+                Price = price,
+                Stock = stock
+            };
+            _context.Books.Add(newBook);
+            _context.SaveChanges();
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(TitleTextBox.Text) ||
@@ -86,15 +100,7 @@ namespace BookStore.Pages
 
             if (_currentBook == null)
             {
-                var newBook = new Books
-                {
-                    Title = TitleTextBox.Text,
-                    AuthorID = (int)AuthorComboBox.SelectedValue,
-                    GenreID = (int)GenreComboBox.SelectedValue,
-                    Price = price,
-                    Stock = stock
-                };
-                _context.Books.Add(newBook);
+                AddBook(TitleTextBox.Text, (int)AuthorComboBox.SelectedValue, (int)GenreComboBox.SelectedValue, price, stock);
             }
             else
             {

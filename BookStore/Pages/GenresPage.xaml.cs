@@ -28,6 +28,20 @@ namespace BookStore.Pages
             }
         }
 
+        public void DeleteGenre(int genreId)
+        {
+            using (var db = new BookStoreEntities())
+            {
+                var genreToDelete = db.Genres.Find(genreId);
+                if (genreToDelete != null)
+                {
+                    db.Genres.Remove(genreToDelete);
+                    db.SaveChanges();
+                }
+            }
+            LoadGenres();
+        }
+
         private void AddGenre_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new AddGenrePage());
@@ -50,17 +64,7 @@ namespace BookStore.Pages
             if (GenresDataGrid.SelectedItem is var selectedGenre && selectedGenre != null)
             {
                 int genreId = (int)((dynamic)selectedGenre).GenreID;
-
-                using (var db = new BookStoreEntities())
-                {
-                    var genreToDelete = db.Genres.Find(genreId);
-                    if (genreToDelete != null)
-                    {
-                        db.Genres.Remove(genreToDelete);
-                        db.SaveChanges();
-                        LoadGenres();
-                    }
-                }
+                DeleteGenre(genreId);
             }
             else
             {

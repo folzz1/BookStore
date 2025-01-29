@@ -24,20 +24,26 @@ namespace BookStore.Pages
             BioTextBox.Text = author.Bio;
         }
 
+        public void AddAuthor(string firstName, string lastName, string patronymic, string bio)
+        {
+            var newAuthor = new Authors
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Patronymic = patronymic,
+                Bio = bio
+            };
+            _context.Authors.Add(newAuthor);
+            _context.SaveChanges();
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (_currentAuthor == null)
                 {
-                    var newAuthor = new Authors
-                    {
-                        FirstName = FirstNameTextBox.Text,
-                        LastName = LastNameTextBox.Text,
-                        Patronymic = PatronymicTextBox.Text,
-                        Bio = BioTextBox.Text
-                    };
-                    _context.Authors.Add(newAuthor);
+                    AddAuthor(FirstNameTextBox.Text, LastNameTextBox.Text, PatronymicTextBox.Text, BioTextBox.Text);
                 }
                 else
                 {

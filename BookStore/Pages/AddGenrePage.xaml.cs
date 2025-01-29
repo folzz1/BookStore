@@ -20,15 +20,21 @@ namespace BookStore.Pages
             GenreNameTextBox.Text = genre.GenreName;
         }
 
+        public void AddGenre(string genreName)
+        {
+            var newGenre = new Genres
+            {
+                GenreName = genreName
+            };
+            _context.Genres.Add(newGenre);
+            _context.SaveChanges();
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (_currentGenre == null)
             {
-                var newGenre = new Genres
-                {
-                    GenreName = GenreNameTextBox.Text
-                };
-                _context.Genres.Add(newGenre);
+                AddGenre(GenreNameTextBox.Text);
             }
             else
             {

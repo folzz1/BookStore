@@ -31,26 +31,26 @@ namespace BookStore.Pages
             }
         }
 
+        public void DeleteAuthor(int authorId)
+        {
+            using (var db = new BookStoreEntities())
+            {
+                var authorToDelete = db.Authors.Find(authorId);
+                if (authorToDelete != null)
+                {
+                    db.Authors.Remove(authorToDelete);
+                    db.SaveChanges();
+                }
+            }
+            LoadAuthors();
+        }
+
         private void DeleteAuthor_Click(object sender, RoutedEventArgs e)
         {
             if (AuthorsDataGrid.SelectedItem is var selectedAuthor && selectedAuthor != null)
             {
                 int authorId = (int)((dynamic)selectedAuthor).AuthorID;
-
-                using (var db = new BookStoreEntities())
-                {
-                    var authorToDelete = db.Authors.Find(authorId);
-                    if (authorToDelete != null)
-                    {
-                        db.Authors.Remove(authorToDelete);
-                        db.SaveChanges();
-                        LoadAuthors();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Автор не найден в базе данных.");
-                    }
-                }
+                DeleteAuthor(authorId);
             }
             else
             {
